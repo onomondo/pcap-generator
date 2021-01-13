@@ -34,7 +34,7 @@ function configure (_opts) {
       const packetHeader = Buffer.alloc(16)
       const isTimestampMicroPrecision = isMicroseconds(packet.timestamp)
       const [seconds, microseconds] = isTimestampMicroPrecision
-        ? String(packet.timestamp).split('.')
+        ? String(packet.timestamp).split('.').map(str => Number(str))
         : [Math.floor(packet.timestamp / 1000), Math.floor(((packet.timestamp / 1000) % 1) * 1000000)]
 
       packetHeader.writeUInt32BE(seconds, 0) // 4
