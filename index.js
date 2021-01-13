@@ -36,9 +36,8 @@ function configure (_opts) {
       const [seconds, microseconds] = isTimestampMicroPrecision
         ? String(packet.timestamp).split('.').map(str => Number(str))
         : [Math.floor(packet.timestamp / 1000), Math.floor(((packet.timestamp / 1000) % 1) * 1000000)]
-      const addToSeconds = isTimestampMicroPrecision ? Math.floor(microseconds / 1000000) : 0
-      packetHeader.writeUInt32BE(seconds + addToSeconds, 0) // 4 - if in microsecond precision then increase seconds if microsecond is above 1,000,000 (see documentation)
-      packetHeader.writeUInt32BE(microseconds % 1000000, 4) // 4 - if in microsecond precision then microseconds has to be below 1,000,000 (see documentation)
+      packetHeader.writeUInt32BE(seconds, 0) // 4
+      packetHeader.writeUInt32BE(makeLessThanAMillion(microseconds), 4) // 4 - if in microsecond precision then remove excess of 1,000,000 (see documentation)
       packetHeader.writeUInt32BE(packet.buffer.length, 8) // 4
       packetHeader.writeUInt32BE(packet.buffer.length, 12) // 4
 
@@ -56,4 +55,11 @@ function configure (_opts) {
 
 function isMicroseconds (ts) {
   return ts % 1 !== 0
+}
+
+function makeLessThanAMillion (i) {
+  while (i > 1000000) {
+    i = Math.floor(i / 10)
+  }
+  return i
 }
