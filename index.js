@@ -32,8 +32,10 @@ function configure (_opts) {
 
     packets = packets.map(packet => {
       const packetHeader = Buffer.alloc(16)
-      const seconds = Math.floor(packet.timestamp / 1000)
-      const microseconds = Math.floor(((packet.timestamp / 1000)  % 1) * 1000000)
+      const isTimestampMicroPrecision = isMicroseconds(packet.timestamp)
+      const [seconds, microseconds] = isTimestampMicroPrecision
+        ? String(packet.timestamp).split('.')
+        : [Math.floor(packet.timestamp / 1000), Math.floor(((packet.timestamp / 1000) % 1) * 1000000)]
 
       packetHeader.writeUInt32BE(seconds, 0) // 4
       packetHeader.writeUInt32BE(microseconds, 4) // 4
@@ -50,4 +52,8 @@ function configure (_opts) {
   generate.configure = configure
 
   return generate
+}
+
+function isMicroseconds (ts) {
+  return ts % 1 !== 0
 }

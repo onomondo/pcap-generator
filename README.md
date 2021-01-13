@@ -10,6 +10,8 @@ Generate PCAP files from packets
 
 `pcap-generator` can be used both in Node and in the browser. In Node.js it uses the native `Buffer` and in the browser you have to specify it by calling `.configure`
 
+Note that it supports both miliseconds (timestamp is an integer) and microseconds (timestamp is a float).
+
 ### Node.js
 
 ``` js
@@ -17,7 +19,7 @@ const generator = require('pcap-generator')
 const fs = require('fs')
 
 const ipPackets = [{
-  timestamp: Date.now(),
+  timestamp: Date.now(), // miliseconds
   buffer: Buffer.from('4500002d000000000011d0970a0a0a0a0b0b0b0b450000210019ffff7b2268656c6c6f223a22776f726c64227d', 'hex')
 }]
 const pcapFile = generator(ipPackets)
@@ -34,7 +36,7 @@ import { configure } from 'pcap-generator'
 
 const generator = configure({ Buffer: Buffer })
 const ipPackets = [{
-  timestamp: Date.now(),
+  timestamp: 1802869.484431046, // microseconds
   buffer: Buffer.from('4500002d000000000011d0970a0a0a0a0b0b0b0b450000210019ffff7b2268656c6c6f223a22776f726c64227d', 'hex')
 }]
 const pcapFile = generator(ipPackets)
